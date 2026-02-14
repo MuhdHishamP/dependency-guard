@@ -94,9 +94,9 @@ function scoreDeprecation(info: PackageInfo | null): RiskFactor {
     if (!info) {
         return {
             name: 'Deprecation',
-            score: WEIGHT_DEPRECATION,
+            score: 0,
             maxScore: WEIGHT_DEPRECATION,
-            reason: 'Package info unavailable — skipped',
+            reason: 'Package not found on npm — cannot verify',
         };
     }
 
@@ -121,9 +121,9 @@ function scoreMaintenance(info: PackageInfo | null): RiskFactor {
     if (!info) {
         return {
             name: 'Maintenance',
-            score: WEIGHT_MAINTENANCE,
+            score: 0,
             maxScore: WEIGHT_MAINTENANCE,
-            reason: 'Package info unavailable — skipped',
+            reason: 'Package not found on npm — cannot verify',
         };
     }
 
@@ -186,6 +186,18 @@ export function calculateRiskScore(
         scoreDeprecation(packageInfo),
         scoreMaintenance(packageInfo),
     ];
+
+    // If the package wasn't found on npm at all, the compatibility
+    // and security scores are meaningless (empty data ≠ "no issues").
+    // Override compatibility to 0 — we can't vouch for what we can't verify.
+    if (packageInfo === null) {
+        factors[0] = {
+            name: 'Peer Compatibility',
+            score: 0,
+            maxScore: WEIGHT_COMPATIBILITY,
+            reason: 'Package not found on npm — cannot verify',
+        };
+    }
 
     const totalScore = factors.reduce((sum, f) => sum + f.score, 0);
 

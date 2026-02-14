@@ -5,4 +5,4 @@ dist/
 .DS_Store
 coverage/
 .dependency-guard/
-.vscode/
+.vscode/mvp_v1.md
