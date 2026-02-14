@@ -5,4 +5,5 @@ dist/
 .DS_Store
 coverage/
 .dependency-guard/
-.vscode/mvp_v1.md
+.gitignore.bak
+mvp_v1.md
